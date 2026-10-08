@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>待办事项</title>
+    <style>
+        .done { text-decoration: line-through; color: gray; }
+    </style>
+</head>
+<body>
+    <h1>我的待办事项</h1>
+    <input type="text" id="new-todo" placeholder="输入新的待办...">
+    <button id="add-btn" onclick="addTodo()">添加</button>
+    <p>剩余任务：<span id="count">0</span></p>
+    <ul id="todo-list">
+        <!-- 待办事项会被动态添加到这里 -->
+    </ul>
+
+    <script>
+        let todos = [];
+
+        function addTodo() {
+            const input = document.getElementById('new-todo');
+            const text = input.value.trim();
+            if (text === '') return;
+
+            todos.push({ text: text, done: false });
+            input.value = '';
+            renderList();
+        }
+
+        function renderList() {
+            const list = document.getElementById('todo-list');
+            list.innerHTML = '';
+
+            todos.forEach((todo, index) => {
+                const li = document.createElement('li');
+                li.id = 'todo-' + index;
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = todo.done;
+                checkbox.onclick = () => toggleTodo(index);
+
+                const span = document.createElement('span');
+                span.innerText = todo.text;
+                if (todo.done) span.className = 'done';
+
+                const delBtn = document.createElement('button');
+                delBtn.innerText = '删除';
+                delBtn.onclick = () => deleteTodo(index);
+
+                li.appendChild(checkbox);
+                li.appendChild(span);
+                li.appendChild(delBtn);
+                list.appendChild(li);
+            });
+
+            document.getElementById('count').innerText = todos.filter(t => !t.done).length;
+        }
+
+        function toggleTodo(index) {
+            todos[index].done = !todos[index].done;
+            renderList();
+        }
+
+        function deleteTodo(index) {
+            todos.splice(index, 1);
+            renderList();
+        }
+    </script>
+</body>
+</html>
